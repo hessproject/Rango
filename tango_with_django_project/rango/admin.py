@@ -8,8 +8,8 @@ class CategoryAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug":('name',)}
 
 class PageAdmin(admin.ModelAdmin):
-    fields = ["title", "category", "url"]
-    list_display = ["title", "category", "url",]
+    fields = ["title", "category", "url", "views",]
+    list_display = ["title", "category", "url", "views",]
 
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Page, PageAdmin)
