@@ -84,6 +84,11 @@ def add_cat(name, views, likes):
     c.save()
     return c
 
+def test_cleaner(url):
+    if url and not (url.startswith('http://') or url.startswith('https://')):
+        url = "http://" + url
+        print(url)
+
 
 if __name__ == "__main__":
     print ("Starting Rango population script...")

@@ -1,21 +1,14 @@
-<!DOCTYPE html>
-
+{% extends 'rango/base.html' %}
 {% load staticfiles %}
 
-<html>
+{% block title_block %}
+    About
+{% endblock %}
 
-    <head>
+{% block body_block %}
+    <h1>About Page</h1><br>
 
-    </head>
-
-    <body>
-
-        <h1>About Page</h1><br>
-
-        <strong>This tutorial is being put together by {{ authorname }} with Django</strong><br>
-        <a href="/rango">Home Page</a><br>
-        <img src="{% static 'images/django.png' alt='Django logo'%}">
-
-    </body>
-
-</html>
+    <strong>This tutorial is being put together by {{ authorname }} with Django</strong><br>
+    <a href="{% url 'index' %}">Home Page</a><br>
+    <img src="{% static 'images/django.png' alt='Django logo'%}">
+{% endblock %}

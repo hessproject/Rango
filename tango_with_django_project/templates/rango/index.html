@@ -1,49 +1,42 @@
-<!DOCTYPE html>
-
+{% extends 'rango/base.html' %}
 {% load staticfiles %}
 
-<html>
+{% block title_block%}
+    Home
+{% endblock %}
 
-    <head>
-        <title>Rango</title>
-    </head>
+{% block body_block %}
+    <h1>Rango says...</h1>
+    <div>hey there partner!</div>
 
-    <body>
+    <div>
+        {% if categories %}
+        <h2>Most Liked Categories</h2>
+        <ol>
+            {% for category in categories %}
+            <li><a href="{% url 'show_category' category.slug %}">{{ category.name }}</a></li>
+            {% endfor %}
+        </ol>
+        {% else %}
+        <strong>There are no categories present.</strong>
+        {% endif %}
+    </div>
 
-        <h1>Rango says...</h1>
-        <div>hey there partner!</div>
+    <div>
+        {% if pages %}
+        <h2>Most Viewed Pages</h2>
+        <ol>
+            {% for page in pages %}
+            <li><a href ='{{ page.url }}'>{{ page.title }}</a></li>
+            {% endfor %}
+        </ol>
+        {% else %}
+        <strong>There are no current pages</strong>
+        {% endif %}
+    </div>
 
-        <div>
-            {% if categories %}
-            <h2>Most Liked Categories</h2>
-            <ol>
-                {% for category in categories %}
-                    <li><a href="/rango/category/{{ category.slug }}">{{ category.name }}</a></li>
-                {% endfor %}
-            </ol>
-            {% else %}
-                <strong>There are no categories present.</strong>
-            {% endif %}
-        </div>
+    <div>
+        <img src="{% static 'images/Rango.jpg' %}" alt="Picture of Rango" />
+    </div>
+{% endblock %}
 
-        <div>
-            {% if pages %}
-            <h2>Most Viewed Pages</h2>
-            <ol>
-                {% for page in pages %}
-                    <li><a href ='{{ page.url }}'>{{ page.title }}</a></li>
-                {% endfor %}
-            </ol>
-            {% else %}
-                <strong>There are no current pages</strong>
-            {% endif %}
-        </div>
-
-        <div>
-            <a href="/rango/about">About Rango</a><br />
-            <img src="{% static 'images/Rango.jpg' %}" alt="Picture of Rango" />
-        </div>
-
-    </body>
-
-</html>
