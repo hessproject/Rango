@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rango'
+    'rango',
+    'registration'
 ]
 
 MIDDLEWARE = [
@@ -102,7 +103,18 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LOGIN_URL = '/rango/login/'
+
+# Other Authentication settings
+
+REGISTRATION_OPEN = True # If true, users can register
+
+ACCOUNT_ACTIVATION_DAYS = 7 # One week activation window
+
+LOGIN_REDIRECT_URL = '/rango/' # The page users arrive at when they log in successfully
+
+LOGIN_URL = '/accounts/login/' # Page users are directed to if they are not logged in
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
 

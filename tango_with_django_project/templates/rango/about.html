@@ -7,7 +7,7 @@
 
 {% block body_block %}
     <h1>About Page</h1><br>
-
+    <p>visits : {{ visits }}</p>
     <strong>This tutorial is being put together by {{ authorname }} with Django</strong><br>
     <a href="{% url 'index' %}">Home Page</a><br>
     <img src="{% static 'images/django.png' alt='Django logo'%}">
