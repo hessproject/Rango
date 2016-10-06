@@ -6,6 +6,7 @@ from django.core.urlresolvers import reverse
 from rango.models import Page, Category
 from rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm
 from datetime import datetime
+from rango.bing_search import run_query
 
 # Create your views here.
 
@@ -203,4 +204,17 @@ def user_logout(request):
 @login_required
 def restricted(request):
     return HttpResponse('You can see this text if you are logged in')
+
+
+def search(request):
+    result_list = []
+
+    if request.method == 'POST':
+        query = request.POST['query'].strip()
+        if query:
+            result_list = run_query(query)
+
+    context_dict = {'result_list': result_list}
+
+    return render(request, 'rango/search.html', context_dict)
 

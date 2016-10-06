@@ -26,5 +26,8 @@ urlpatterns = [
         views.restricted,
         name="restricted"),
 
+    url(r'^search/$',
+        views.search,
+        name='search'),
 
 ]

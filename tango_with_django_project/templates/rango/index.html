@@ -6,43 +6,47 @@
 {% endblock %}
 
 {% block body_block %}
-    <h1>Rango says...
-    {% if user.is_authenticated%}
-        howdy {{ user.username }}
-    {% else %}
-        hey there partner!
-    {% endif %}
-    </h1>
 
-    <div>
-        <p> visits: {{ visits }}</p>
-        {% if categories %}
-        <h2>Most Liked Categories</h2>
-        <ol>
-            {% for category in categories %}
-            <li><a href="{% url 'show_category' category.slug %}">{{ category.name }}</a></li>
-            {% endfor %}
-        </ol>
+    <div class="jumbotron">
+        <h1>Rango says...
+        {% if user.is_authenticated%}
+            howdy {{ user.username }}
         {% else %}
-        <strong>There are no categories present.</strong>
+            hey there partner!
         {% endif %}
+        </h1>
+    </div>
+
+    <div class="row most-viewed">
+        <div class="col-lg-6">
+            {% if categories %}
+            <h2>Most Liked Categories</h2>
+            <ul class="list-group">
+                {% for category in categories %}
+                <li class="list-group-item"><a href="{% url 'show_category' category.slug %}">{{ category.name }}</a></li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <strong>There are no categories present.</strong>
+            {% endif %}
+        </div>
+
+        <div class="col-lg-6">
+            {% if pages %}
+            <h2>Most Viewed Pages</h2>
+            <ul class="list-group">
+                {% for page in pages %}
+                <li class="list-group-item"><a href ='{{ page.url }}'>{{ page.title }}</a></li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <strong>There are no current pages</strong>
+            {% endif %}
+        </div>
     </div>
 
     <div>
-        {% if pages %}
-        <h2>Most Viewed Pages</h2>
-        <ol>
-            {% for page in pages %}
-            <li><a href ='{{ page.url }}'>{{ page.title }}</a></li>
-            {% endfor %}
-        </ol>
-        {% else %}
-        <strong>There are no current pages</strong>
-        {% endif %}
-    </div>
-
-    <div>
-        <img src="{% static 'images/Rango.jpg' %}" alt="Picture of Rango" />
+        <img src="{% static 'images/Rango.jpg' %}" alt="Picture of Rango" style="width:480px;height:360px;" />
     </div>
 {% endblock %}
 

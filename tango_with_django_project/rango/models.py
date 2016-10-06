@@ -13,12 +13,6 @@ class Category(models.Model):
         self.slug = slugify(self.name)
         super(Category, self).save(*args, **kwargs)
 
-    """def get_views(self):
-        for page in pages_set:
-            views += page.views
-        return views
-        """
-
     class Meta:
         verbose_name_plural = "categories"
 
