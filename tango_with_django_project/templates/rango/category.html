@@ -2,26 +2,74 @@
 {% load staticfiles %}
 
 {% block title_block %}
-    {{ category.name }}
+{{ category.name }}
 {% endblock %}
 
 {% block body_block %}
-    {% if category %}
-        <h1>{{ category.name }}</h1>
+{% if category %}
+<h1>{{ category.name }}</h1>
 
-        {% if pages %}
-            <ul>
-                {% for page in pages %}
-                    <li><a href="{{ page.url }}">{{ page.title }}</li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <strong>No pages in category</strong><br/>
-        {% endif %}
-        {% if user.is_authenticated %}
-        <a href="{% url 'add_page' category.slug %}">Add a page</a>
-        {% endif %}
+    {% if pages %}
+    <div id="pages">
+    <ul>
+        {% for page in pages %}
+        <li><a href="{% url 'goto' %}?page_id={{page.id}}">{{ page.title }}
+            {% if page.views > 1%}
+                ({{ page.views }} views)
+            {% elif page.views == 1%}
+                ({{ page.views }} view)
+            {% else %}
+                (0 views)
+            {% endif %}
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+    </div>
+
     {% else %}
-        The specified category does not exists!
+    <strong>No pages in category</strong><br/>
     {% endif %}
+
+{% else %}
+The specified category does not exists!
+{% endif %}
+<p>
+    <strong id="like_count">{{ category.likes }}</strong> people like this category
+    {% if user.is_authenticated %}
+    <button id="likes" data-catid="{{ category.id }}" class="btn btn-primary" type="button"><span class="glyphicon glyphicon-thumbs-up">Like</span></button>
+    {% endif %}
+</p>
+<hr>
+<div>
+    <h2>Search</h2>
+    <br>
+    <form class="form-inline" id="user_form" method="post" action="{% url 'show_category' category.slug %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <input class="form-control" type="text" name="query" value="{{ query }}" id="query">
+        </div>
+        <button class="btn btn-primary" type="submit" name="submit" value="Search">Search</button>
+    </form>
+    <br>
+    <div>
+        {% if result_list %}
+        <h3>Results</h3>
+        <!-- Display search results in OL -->
+        <div class="list-group">
+        {% for result in result_list %}
+            <div class="list-group-item">
+                <h4 class="list-group-item-heading">
+                    <a href="{{ result.link }}">{{ result.title }}</a>
+                </h4>
+                <p class="list-group-item-text">{{ result.summary }}</p>
+                {% if user.is_authenticated %}
+                    <button class="rango-add btn btn-mini btn-info" data-catid="{{ category.id }}" data-title="{{ result.title }}" data-url="{{ result.link }}"><span class="glyphicon glyphicon-plus"></span>Add Page</button>
+                {% endif %}
+            </div>
+        {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

@@ -3,6 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
+from django.shortcuts import redirect
 from rango.models import Page, Category
 from rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm
 from datetime import datetime
@@ -72,18 +73,29 @@ def about(request):
 
 def show_category(request, category_name_slug):
     context_dict = {}
+    context_dict['result_list'] = None
+    context_dict['query'] = None
+
+    if request.method == 'POST':
+        query = request.POST['query'].strip()
+        if query:
+            result_list = run_query(query)
+            context_dict['result_list'] = result_list
+            context_dict['query'] = query
 
     try:
         category = Category.objects.get(slug=category_name_slug)
-
+        context_dict['category_name'] = category.name
         # Retrieve all associated pages. Filter returns list of page objects or empty list
-        pages = Page.objects.filter(category=category)
-        context_dict["pages"] = pages
-        context_dict["category"] = category
+        pages = Page.objects.filter(category=category).order_by('-views')
+        context_dict['pages'] = pages
+        context_dict['category'] = category
 
     except Category.DoesNotExist:
-        context_dict["pages"] = None
-        context_dict["category"] = None
+        pass
+
+    if not context_dict['query']:
+        context_dict['query'] = category.name
 
     return render(request, 'rango/category.html', context_dict)
 
@@ -206,7 +218,7 @@ def restricted(request):
     return HttpResponse('You can see this text if you are logged in')
 
 
-def search(request):
+'''def search(request):
     result_list = []
 
     if request.method == 'POST':
@@ -216,5 +228,84 @@ def search(request):
 
     context_dict = {'result_list': result_list}
 
-    return render(request, 'rango/search.html', context_dict)
+    return render(request, 'rango/search.html', context_dict)'''
 
+
+def track_url(request):
+    page_id = None
+    url = '/rango/'
+
+    if request.method == "GET":
+        if 'page_id' in request.GET:
+            page_id = request.GET['page_id']
+            try:
+                page = Page.objects.get(id=page_id)
+                page.views = page.views+1
+                page.save()
+                url = page.url
+            except:
+                pass
+
+    return redirect(url)
+
+@login_required
+def like_category(request):
+    cat_id = None
+
+    if request.method == 'GET':
+        cat_id = request.GET['category_id']
+        likes = 0
+        if cat_id:
+            cat = Category.objects.get(id=int(cat_id))
+            if cat:
+                likes = cat.likes + 1
+                cat.likes = likes
+                cat.save()
+    return HttpResponse(likes)
+
+
+def get_category_list(max_results=0, starts_with=''):
+    cat_list = []
+    if starts_with:
+        cat_list = Category.objects.filter(name__startswith=starts_with)
+
+        if max_results > 0:
+            if len(cat_list) > max_results:
+                cat_list = cat_list[:max_results]
+
+    return cat_list
+
+
+def suggest_category(request):
+    cat_list = []
+    starts_with = ''
+
+    if request.method == 'GET':
+        starts_with = request.GET['suggestion']
+        cat_list = get_category_list(8, starts_with)
+
+    context_dict = {}
+    context_dict['cats'] = cat_list
+
+    return render(request, 'rango/cats.html', context_dict)
+
+
+@login_required
+def auto_add_page(request):
+    cat_id = None
+    url = None
+    title = None
+    context_dict = {}
+
+    if request.method == "GET":
+        cat_id = request.GET['category_id']
+        url = request.GET['url']
+        title = request.GET['title']
+
+    if cat_id:
+        category = Category.objects.get(id=int(cat_id))
+        p = Page.objects.get_or_create(category=category, title=title, url=url)
+        pages = Page.objects.filter(category=category).order_by('-views')
+        context_dict['pages'] = pages
+
+    return render(request, 'rango/page_list.html', context_dict)
